@@ -1,0 +1,17 @@
+{
+  "name": "my-puppeteer-app",
+  "version": "1.0.0",
+  "description": "Alpine + Puppeteer 完美运行示例",
+  "main": "index.js",
+  "type": "module",                    // 推荐使用 ESM（可选，commonjs 也行）
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer": "^23.5.0"             // 2025年11月最新稳定版，直接写这个就行
+    // 如果你还用 puppeteer-core（极少数情况），才需要额外配
+  }
+}
