@@ -1,6 +1,6 @@
 FROM node:20-alpine
 
-# 安装所有依赖（构建 + 运行时）
+# 1. 基础依赖 + Chromium + Puppeteer 相关
 RUN apk add --no-cache \
     chromium \
     nss \
@@ -19,7 +19,17 @@ RUN npm config set registry https://registry.npmmirror.com/ && \
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
+    
+# 2. 添加 SSH 客户端
+RUN apk add --no-cache openssh-client sshpass
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+# 复制私钥（确保权限是 600！）
+COPY id_cron /root/.ssh/id_cron
+RUN chmod 600 /root/.ssh/id_cron && \
+    echo "Host *" >> /root/.ssh/config && \
+    echo "  StrictHostKeyChecking no" >> /root/.ssh/config && \
+    echo "  IdentityFile /root/.ssh/id_cron" >> /root/.ssh/config
+    
 WORKDIR /app
 VOLUME /app
 COPY package.json ./
