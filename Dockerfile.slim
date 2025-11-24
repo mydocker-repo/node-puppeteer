@@ -18,8 +18,8 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh && \
     touch /root/.ssh/known_hosts
 # 复制私钥（确保权限是 600！）
-COPY id_cron* /root/.ssh/
-RUN chmod 600 /root/.ssh/id_cron* && \
+COPY id_cron /root/.ssh/
+RUN chmod 600 /root/.ssh/id_cron && \
     echo "Host *" >> /root/.ssh/config && \
     echo "  StrictHostKeyChecking no" >> /root/.ssh/config && \
     echo "  IdentityFile /root/.ssh/id_cron" >> /root/.ssh/config
