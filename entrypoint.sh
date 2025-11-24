@@ -11,7 +11,7 @@ fi
 
 # 如果没有就创建一个示例任务，防止空
 if [ ! -f "/var/spool/cron/crontabs/root" ]; then
-    echo "* * * * * echo 'Cron is running' >> /var/log/cron.log" > /var/spool/cron/crontabs/root
+    echo "0 0 1 1 1 echo 'Cron is running' >> /var/log/cron.log" > /var/spool/cron/crontabs/root
 fi
 
 # 确保日志可写
