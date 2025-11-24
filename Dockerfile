@@ -14,7 +14,7 @@ RUN apk add --no-cache \
     g++
 
 # npm 配置（加速 + 清理）
-RUN npm config set registry https://registry.npm.taobao.org/ && \
+RUN npm config set registry https://registry.npmmirror.com/ && \
     npm cache clean --force
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
@@ -32,7 +32,6 @@ RUN chmod 600 /root/.ssh/id_cron && \
     echo "  IdentityFile /root/.ssh/id_cron" >> /root/.ssh/config
     
 WORKDIR /app
-VOLUME /app
 COPY package.json ./
 RUN npm install --production --verbose --legacy-peer-deps
 COPY index.js ./
