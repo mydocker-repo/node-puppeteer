@@ -29,11 +29,6 @@ RUN chmod 600 /root/.ssh/id_cron && \
     echo "  StrictHostKeyChecking no" >> /root/.ssh/config && \
     echo "  IdentityFile /root/.ssh/id_cron" >> /root/.ssh/config
 
-# crontab
-RUN echo "#*/2  * * * * node /app/0.js >> /var/log/cron.log 2>&1" >> /var/spool/cron/crontabs/root && \
-    chmod 600 /var/spool/cron/crontabs/root && \
-    touch /var/log/cron.log
-
 COPY index.js ./
 COPY crontab ./
 
