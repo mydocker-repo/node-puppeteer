@@ -21,12 +21,11 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app
-
 COPY package.json ./
-
 RUN npm install --production --verbose --legacy-peer-deps
-
 COPY index.js ./
+COPY entrypoint.sh /entrypoint.sh
+COPY crontab ./
 
 # 创建 crontab（保留你之前的定时任务）
 RUN mkdir -p /var/spool/cron/crontabs && \
@@ -35,5 +34,5 @@ RUN mkdir -p /var/spool/cron/crontabs && \
     touch /var/log/cron.log
 
 # 最终命令：启动 cron 并给 shell
-ENTRYPOINT ["sh", "-c"]
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["crond -f -l 4 && echo '定时任务已启动！直接敲 node xxx.js 运行脚本' && exec sh"]
