@@ -15,7 +15,8 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
     
 COPY --from=builder /app/node_modules /app/node_modules
 
-RUN mkdir -p /root/.ssh /var/spool/cron/crontabs /var/log && chmod 700 /root/.ssh
+RUN mkdir -p /root/.ssh /var/spool/cron/crontabs /var/log && chmod 700 /root/.ssh && \
+    touch /root/.ssh/known_hosts
 
 WORKDIR /app
 COPY index.js ./
