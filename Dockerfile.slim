@@ -11,30 +11,31 @@ RUN npm install --production --verbose --legacy-peer-deps
 FROM node:20-alpine
 RUN apk add --no-cache \
     chromium nss freetype harfbuzz ca-certificates ttf-freefont font-noto-cjk \
-    openssh-client curl
+    openssh-client sshpass curl
 
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
-    
+
+WORKDIR /app
+   
 COPY --from=builder /app/node_modules /app/node_modules
 
 RUN mkdir -p /root/.ssh /var/spool/cron/crontabs /var/log && chmod 700 /root/.ssh && \
     touch /root/.ssh/known_hosts
-
-WORKDIR /app
-COPY index.js ./
-COPY crontab ./
 # 复制私钥（确保权限是 600！）
 COPY id_cron /root/.ssh/id_cron
 RUN chmod 600 /root/.ssh/id_cron && \
     echo "Host *" >> /root/.ssh/config && \
     echo "  StrictHostKeyChecking no" >> /root/.ssh/config && \
     echo "  IdentityFile /root/.ssh/id_cron" >> /root/.ssh/config
+
 # crontab
-RUN echo "#*/10 * * * * ssh user@your-server.com 'uptime' >> /var/log/ssh-cron.log 2>&1" > /var/spool/cron/crontabs/root && \
-    echo "#*/2  * * * * node /app/0.js >> /var/log/node-cron.log 2>&1" >> /var/spool/cron/crontabs/root && \
+RUN echo "#*/2  * * * * node /app/0.js >> /var/log/cron.log 2>&1" >> /var/spool/cron/crontabs/root && \
     chmod 600 /var/spool/cron/crontabs/root && \
     touch /var/log/cron.log
+
+COPY index.js ./
+COPY crontab ./
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
