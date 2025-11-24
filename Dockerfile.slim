@@ -6,7 +6,7 @@ COPY package.json ./
 # npm 配置（加速 + 清理）
 RUN npm config set registry https://registry.npmmirror.com/ && \
     npm cache clean --force
-RUN npm install --production --verbose --legacy-peer-deps
+RUN npm install --production --legacy-peer-deps
 
 FROM node:20-alpine
 RUN apk add --no-cache \
@@ -28,7 +28,7 @@ RUN chmod 600 /root/.ssh/id_cron && \
     echo "Host *" >> /root/.ssh/config && \
     echo "  StrictHostKeyChecking no" >> /root/.ssh/config && \
     echo "  IdentityFile /root/.ssh/id_cron" >> /root/.ssh/config
-
+COPY package.json ./
 COPY index.js ./
 COPY crontab ./
 
