@@ -22,7 +22,8 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     
 # 2. 添加 SSH 客户端
 RUN apk add --no-cache openssh-client sshpass
-RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
+RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh && \
+    touch /root/.ssh/known_hosts
 # 复制私钥（确保权限是 600！）
 COPY id_cron /root/.ssh/id_cron
 RUN chmod 600 /root/.ssh/id_cron && \
