@@ -1,0 +1,19 @@
+name: Delete-Image
+
+on:
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  delete-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Delete GHCR Image
+        uses: redhat-actions/delete-package-version@v1
+        with:
+          package-name: 'mydocker-repo/puppeteer' # 例如：myorg/myimage
+          package-type: 'container'
+          token: ${{ secrets.GITHUB_TOKEN }} # 使用内置的GITHUB_TOKEN也可以，但如果需要删除私有镜像，则需要使用PAT
+          version: '' # 例如：latest, v1.0.0等，留空则删除所有版本
