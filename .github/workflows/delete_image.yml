@@ -6,12 +6,15 @@ on:
 jobs:
   delete-image:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Delete GHCR Image
-        uses: redhat-actions/delete-package-version@v1
+        uses: actions/delete-package@v1
         with:
           package-name: 'mydocker-repo/puppeteer' # 例如：myorg/myimage
           package-type: 'container'
