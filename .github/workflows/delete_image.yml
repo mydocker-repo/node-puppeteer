@@ -1,5 +1,4 @@
-# .github/workflows/cleanup-image-tag.yml
-name: Cleanup Old Image Versions (Keep Latest)
+name: Cleanup-Image
 
 on:
   workflow_dispatch:
