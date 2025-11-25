@@ -1,5 +1,4 @@
 name: Delete-Image
-
 on:
   workflow_dispatch: # 允许手动触发
 
