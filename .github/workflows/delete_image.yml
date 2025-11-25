@@ -1,10 +1,10 @@
-name: Cleanup-Image
+name: Delete-Image
 
 on:
   workflow_dispatch:
     inputs:
       tag:
-        description: '要清理的镜像标签（例如 v1.2.3、latest、dev 等）'
+        description: 'rtian-1'
         required: true
         type: string
   # 如果你希望每天自动清理一次，可以取消下面这行注释
@@ -15,8 +15,8 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     permissions:
-      packages: delete   # 关键！允许删除 GHCR 镜像
-      contents: read     # 读取仓库信息
+      packages: delete
+      contents: read
 
     steps:
       - name: 删除指定 tag 下除最新版本外的所有历史镜像
