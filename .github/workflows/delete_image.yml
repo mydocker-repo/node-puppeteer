@@ -1,22 +1,63 @@
-name: Delete-Image
+# .github/workflows/cleanup-image-tag.yml
+name: Cleanup Old Image Versions (Keep Latest)
 
 on:
-  workflow_dispatch: # 允许手动触发
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '要清理的镜像标签（例如 v1.2.3、latest、dev 等）'
+        required: true
+        type: string
+  # 如果你希望每天自动清理一次，可以取消下面这行注释
+  # schedule:
+  #   - cron: '0 3 * * *'  # 每天 UTC 03:00 执行
 
 jobs:
-  delete-image:
+  cleanup:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      packages: delete   # 关键！允许删除 GHCR 镜像
+      contents: read     # 读取仓库信息
 
-      - name: Delete GHCR Image
-        uses: actions/delete-package-versions@v5
-        with:
-          package-name: 'mydocker-repo/puppeteer'
-          package-type: 'container'
-          token: ${{ secrets.DELETE_TOKEN }} 
-          version: ''
+    steps:
+      - name: 删除指定 tag 下除最新版本外的所有历史镜像
+        run: |
+          TAG="${{ inputs.tag || 'rtian' }}"   # workflow_dispatch 没填就默认 latest
+          OWNER="${{ github.repository_owner }}"
+          REPO="$(echo ${{ github.repository }} | cut -d'/' -f2)"
+          PACKAGE_NAME="$(echo $REPO | tr '[:upper:]' '[:lower:]')"  # GHCR 包名默认是仓库名小写
+
+          echo "正在清理镜像包: ghcr.io/$OWNER/$PACKAGE_NAME:$TAG"
+          echo "将只保留该 tag 的最新版本"
+
+          # Step 1: 获取该 tag 的所有 version（按创建时间倒序）
+          VERSIONS=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            "/user/packages/container/$PACKAGE_NAME/versions" \
+            --jq "[ .[] | select(.metadata.container.tags[] == \"$TAG\") | {id: .id, created: .created_at} ] | sort_by(.created) | reverse")
+
+          # Step 2: 取出最新版本的 ID（第一个就是最新的）
+          LATEST_ID=$(echo "$VERSIONS" | jq -r '.[0].id // empty')
+
+          if [ -z "$LATEST_ID" ]; then
+            echo "未找到标签 $TAG 的任何镜像版本，跳过删除"
+            exit 0
+          fi
+
+          echo "最新版本 ID: $LATEST_ID（将被保留）"
+
+          # Step 3: 删除除了最新版之外的所有版本
+          DELETED_COUNT=0
+          echo "$VERSIONS" | jq -r '.[1:][].id' | while read id; do
+            if [ -n "$id" ] && [ "$id" != "null" ]; then
+              echo "正在删除版本 ID: $id (tag: $TAG)"
+              gh api -X DELETE \
+                -H "Accept: application/vnd.github+json" \
+                "/user/packages/container/$PACKAGE_NAME/versions/$id"
+              ((DELETED_COUNT++))
+            fi
+          done
+
+          echo "完成！标签 $TAG 下共删除了 $DELETED_COUNT 个旧版本，仅保留最新的一条"
+        env:
+          GH_TOKEN: ${{ secrets.DELETE_TOKEN }}
