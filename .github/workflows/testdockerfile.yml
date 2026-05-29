@@ -16,9 +16,6 @@ jobs:
           docker run --name puppeteer -v $(pwd)/data:/data ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25 sh -c "node /app/index.js&&ls -l &&cp *.png /data"
 
       - name: Commit and Push
-        run: |
-          git config user.name "Github Actions Bot"
-          git config user.email ""
-          git add .
-          git commit -m "update docker generated Image file"
-          git push -u origin main
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: 自动更新文件"
