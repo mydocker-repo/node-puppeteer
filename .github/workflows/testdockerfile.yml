@@ -12,5 +12,5 @@ jobs:
       - name: pulldocker
         run: |
           docker pull ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25
-          docker run -d --name puppeteer node-puppeteer sh -c "node /app/index.js"
+          docker run -d --name puppeteer node-puppeteer:custom-25.11.25 sh -c "node /app/index.js"
           
