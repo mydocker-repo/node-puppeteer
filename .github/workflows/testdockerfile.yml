@@ -14,4 +14,11 @@ jobs:
           docker pull ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25
           docker images
           docker run --name puppeteer -v /data:/data ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25 sh -c "node /app/index.js&&ls -l &&cp *.png /data"
-          
+
+      - name: Commit and Push
+        run: |
+          git config user.name "Github Actions Bot"
+          git config user.email ""
+          git add /data/*
+          git commit -m "update docker generated Image file"
+          git push origin main
