@@ -13,5 +13,5 @@ jobs:
         run: |
           docker pull ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25
           docker images
-          docker run -d --name puppeteer ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25 sh -c "node /app/index.js"
+          docker run -d --name puppeteer -v /data:/data ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25 sh -c "node /app/index.js&&cp *.png /data"
           
