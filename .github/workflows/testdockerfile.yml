@@ -5,9 +5,12 @@ on:
 
 jobs:
   docker:
-    runs-on: ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25
+    runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
-      - name: testcommand
-        run: node /app/index.js
+        uses: actions/checkout@v2
+      - name: pulldocker
+        run: |
+          docker pull ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25
+          docker -it node-puppeteer bash
+          
