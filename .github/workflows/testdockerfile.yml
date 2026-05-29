@@ -1,0 +1,13 @@
+name: Test Docker image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ghcr.io/mydocker-repo/node-puppeteer:custom-25.11.25
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: testcommand
+        run: node /app/index.js
