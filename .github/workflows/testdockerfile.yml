@@ -21,4 +21,4 @@ jobs:
           git config user.email ""
           git add .
           git commit -m "update docker generated Image file"
-          git push origin main
+          git push 
